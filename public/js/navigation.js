@@ -40,30 +40,33 @@ document.addEventListener('DOMContentLoaded', () => {
                 const response = await axios.get('/api/users');
                 const users = response.data.users;
                 const roles = response.data.roles;
-                userTableBody.innerHTML = users.map(user => {
-                    const roles = user.roles.map(role => role.name).join(', ');
-                    // console.log(roles);
-                return `
-                    <tr>
-                        <td class="border">${user.name}</td>
-                        <td class="border">${user.email}</td>
-                        <td class="border">${user.phone}</td>
-                        <td class="border">${user.description}</td>
-                        <td class="border">${roles ? roles : '-'}</td>
-                        <td class="border">
-                            ${user.profile_image ? `<img src="/storage/${user.profile_image}" class="h-16 w-16"/>` : ''}
-                        </td>
-                        <td class="border">
-                            <button class="bg-yellow-500 text-white p-1 rounded update-button" data-id="${user.id}">Update</button>
-                            <button class="bg-red-500 text-white p-1 rounded delete-button" data-id="${user.id}">Delete</button>
-                        </td>
-                    </tr>
-                `}).join('');
-                const rolesSelect = document.querySelector('select[name="roles[]"]');
-                rolesSelect.innerHTML = roles.map(role => `
-                    <option value="${role.name}">${role.name}</option>
-                `).join('');
-                
+                if(users){
+                    userTableBody.innerHTML = users.map(user => {
+                        const roles = user.roles.map(role => role.name).join(', ');
+                        // console.log(roles);
+                    return `
+                        <tr>
+                            <td class="border">${user.name}</td>
+                            <td class="border">${user.email}</td>
+                            <td class="border">${user.phone}</td>
+                            <td class="border">${user.description}</td>
+                            <td class="border">${roles ? roles : '-'}</td>
+                            <td class="border">
+                                ${user.profile_image ? `<img src="/storage/${user.profile_image}" class="h-16 w-16"/>` : ''}
+                            </td>
+                            <td class="border">
+                                <button class="bg-yellow-500 text-white p-1 rounded update-button" data-id="${user.id}">Update</button>
+                                <button class="bg-red-500 text-white p-1 rounded delete-button" data-id="${user.id}">Delete</button>
+                            </td>
+                        </tr>
+                    `}).join('');
+                    const rolesSelect = document.querySelector('select[name="roles[]"]');
+                    rolesSelect.innerHTML = roles.map(role => `
+                        <option value="${role.name}">${role.name}</option>
+                    `).join('');
+                } else {
+                    userTableBody.innerHTML = `<tr><td>No Users Found</td></tr>`
+                }
             };
 
             // Open add user modal
@@ -190,15 +193,19 @@ document.addEventListener('DOMContentLoaded', () => {
                     const response = await axios.get('/api/permissions');
                     const permissions = response.data;
                     // console.log(permissions);
-                    permissionTableBody.innerHTML = permissions.map(permission => `
-                    <tr>
-                        <td class="border text-center">${permission.name}</td>
-                        <td class="border text-center flex justify-center space-x-2">
-                            <button class="bg-yellow-500 text-white p-1 rounded update-button" data-id="${permission.id}">Update</button>
-                            <button class="bg-red-500 text-white p-1 rounded delete-button" data-id="${permission.id}">Delete</button>
-                        </td>
-                    </tr>
-                    `).join('');
+                    if(permissions) {
+                        permissionTableBody.innerHTML = permissions.map(permission => `
+                            <tr>
+                                <td class="border text-center">${permission.name}</td>
+                                <td class="border text-center flex justify-center space-x-2">
+                                    <button class="bg-yellow-500 text-white p-1 rounded update-button" data-id="${permission.id}">Update</button>
+                                    <button class="bg-red-500 text-white p-1 rounded delete-button" data-id="${permission.id}">Delete</button>
+                                </td>
+                            </tr>
+                            `).join('');
+                    } else {
+                        permissionTableBody.innerHTML = `<tr><td>No Permissions Found</td></tr>`
+                    }
                 };
 
                 // Open add permission modal
@@ -303,20 +310,23 @@ document.addEventListener('DOMContentLoaded', () => {
                     const roles = response.data.roles;
                     const permission = response.data.permissions;
                     // console.log(permission);
-                    roleTableBody.innerHTML = roles.map(role => {
-                        const permissions = role.permissions.map(permission => permission.name).join(', ');
-                        return `
-                            <tr>
-                                <td class="border text-center">${role.name}</td>
-                                <td class="border text-center">${permissions}</td>
-                                <td class="border text-center flex justify-center space-x-2">
-                                    <button class="bg-yellow-500 text-white p-1 rounded update-button" data-id="${role.id}">Update</button>
-                                    <button class="bg-red-500 text-white p-1 rounded delete-button" data-id="${role.id}">Delete</button>
-                                </td>
-                            </tr>
-                        `;
-                    }).join('');
-
+                    if(roles) {
+                        roleTableBody.innerHTML = roles.map(role => {
+                            const permissions = role.permissions.map(permission => permission.name).join(', ');
+                            return `
+                                <tr>
+                                    <td class="border text-center">${role.name}</td>
+                                    <td class="border text-center">${permissions}</td>
+                                    <td class="border text-center flex justify-center space-x-2">
+                                        <button class="bg-yellow-500 text-white p-1 rounded update-button" data-id="${role.id}">Update</button>
+                                        <button class="bg-red-500 text-white p-1 rounded delete-button" data-id="${role.id}">Delete</button>
+                                    </td>
+                                </tr>
+                            `;
+                        }).join('');
+                    } else {
+                        roleTableBody.innerHTML = `<tr><td>No Roles Found</td></tr>`
+                    }
                     const permissionsSelect = document.querySelector('select[name="permissions[]"]');
                     permissionsSelect.innerHTML = permission.map(per => `
                         <option value="${per.name}">${per.name}</option>
